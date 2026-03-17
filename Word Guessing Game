@@ -1,0 +1,91 @@
+package ssru.cs.group5;
+
+import javafx.application.Application;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+
+public class GuessWord extends Application {
+
+    String secretWord = "COMSCI";
+    StringBuilder hiddenWord = new StringBuilder("______");
+    int attempts = 5;
+
+    @Override
+    public void start(Stage stage) {
+
+        Label labelGuess = new Label("Enter your guess:");
+        Label labelLength = new Label("Word length: " + secretWord.length() + " characters");
+
+        Label labelWord = new Label("Word: " + hiddenWord);
+
+        TextField input = new TextField();
+
+        Button guessBtn = new Button("Guess");
+
+        Label attemptsLabel = new Label("Attempts left: " + attempts);
+
+        guessBtn.setOnAction(e -> {
+
+            String guess = input.getText().toUpperCase();
+
+            if (guess.length() == 1) {
+                char g = guess.charAt(0);
+                boolean found = false;
+
+                for (int i = 0; i < secretWord.length(); i++) {
+                    if (secretWord.charAt(i) == g) {
+                        hiddenWord.setCharAt(i, g);
+                        found = true;
+                    }
+                }
+
+                if (!found) {
+                    attempts--;
+                }
+
+                labelWord.setText("Word: " + hiddenWord);
+                attemptsLabel.setText("Attempts left: " + attempts);
+
+                if (hiddenWord.toString().equals(secretWord)) {
+                    labelWord.setText("You Win! Word: " + secretWord);
+                    guessBtn.setDisable(true);
+                }
+
+                if (attempts == 0) {
+                    labelWord.setText("Game Over! Word: " + secretWord);
+                    guessBtn.setDisable(true);
+                }
+
+                input.clear();
+            }
+
+        });
+
+        GridPane grid = new GridPane();
+        grid.setVgap(10);
+        grid.setHgap(10);
+        grid.setAlignment(Pos.CENTER);
+
+        grid.add(labelGuess,0,0);
+        grid.add(labelLength,1,0);
+
+        grid.add(labelWord,0,1);
+        grid.add(input,1,1);
+
+        grid.add(guessBtn,0,2);
+        grid.add(attemptsLabel,1,2);
+
+        Scene scene = new Scene(grid,450,200);
+
+        stage.setTitle("Word Guessing Game");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public static void main(String[] args) {
+        launch();
+    }
+}
